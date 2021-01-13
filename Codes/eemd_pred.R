@@ -246,7 +246,7 @@ eemd_pred <- function(data, model_list, horizon){
     {
       metrics_eemd_train[[h]] <- matrix(nrow = dim(combs)[1],ncol = 4)
       metrics_eemd_test[[h]] <- matrix(nrow = dim(combs)[1],ncol = 4)
-      colnames(metrics_eemd_train[[h]]) <- c("i","MAE","MAPE","RMSE")
+      colnames(metrics_eemd_train[[h]]) <- c("i","MAE","MAPE","RMSPE")
       colnames(metrics_eemd_test[[h]]) <- colnames(metrics_eemd_train[[h]])
       rownames(metrics_eemd_train[[h]]) <- model_list
       rownames(metrics_eemd_test[[h]]) <- rownames(metrics_eemd_train[[h]])
@@ -278,20 +278,20 @@ eemd_pred <- function(data, model_list, horizon){
       # metrics
       eemd_step_mae_train <- MAE(step_eemd_pred_train[,i], Obs_train)
       eemd_step_mape_train <- mape(step_eemd_pred_train[,i], Obs_train)
-      eemd_step_rmse_train <- RMSE(step_eemd_pred_train[,i], Obs_train)
+      eemd_step_rmspe_train <- RMSPE(step_eemd_pred_train[,i], Obs_train)
       
       eemd_step_mae_test <- MAE(step_eemd_pred_test[,i], Obs_test)
       eemd_step_mape_test <- mape(step_eemd_pred_test[,i], Obs_test)
-      eemd_step_rmse_test <- RMSE(step_eemd_pred_test[,i], Obs_test)
+      eemd_step_rmspe_test <- RMSPE(step_eemd_pred_test[,i], Obs_test)
       
       metrics_eemd_train[[h]][i,] <- c(i,
                                       eemd_step_mae_train,
                                       eemd_step_mape_train,
-                                      eemd_step_rmse_train)
+                                      eemd_step_rmspe_train)
       metrics_eemd_test[[h]][i,] <- c(i,
                                      eemd_step_mae_test,
                                      eemd_step_mape_test,
-                                     eemd_step_rmse_test)
+                                     eemd_step_rmspe_test)
     }
     step_eemd_pred[[h]] <- cbind(Obs, step_eemd_pred[[h]]) 
     colnames(step_eemd_pred[[h]]) <- c('Obs',model_list)

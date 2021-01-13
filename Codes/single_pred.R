@@ -99,7 +99,7 @@ single_pred <- function(data, model_list, horizon){
     PTEmo[[h]] <- matrix(ncol = length(model_list), nrow = nrow(test))
     metrics_train[[h]] <- matrix(nrow = length(model_list), ncol = 4)
     metrics_test[[h]] <- matrix(nrow = length(model_list), ncol = 4)
-    colnames(metrics_train[[h]]) <- c("i","MAE","MAPE","RMSE")
+    colnames(metrics_train[[h]]) <- c("i","MAE","MAPE","RMSPE")
     colnames(metrics_test[[h]]) <- colnames(metrics_train[[h]])
     rownames(metrics_train[[h]]) <- model_list
     rownames(metrics_test[[h]]) <- rownames(metrics_train[[h]])
@@ -186,21 +186,21 @@ single_pred <- function(data, model_list, horizon){
       # metrics
       step_mae_train <- MAE(PTRmo[[h]][,m], Obs_train)
       step_mape_train <- mape(PTRmo[[h]][,m], Obs_train)
-      step_rmse_train <- RMSE(PTRmo[[h]][,m], Obs_train)
+      step_rmspe_train <- RMSPE(PTRmo[[h]][,m], Obs_train)
       
       step_mae_test <- MAE(PTEmo[[h]][,m], Obs_test)
       step_mape_test <- mape(PTEmo[[h]][,m], Obs_test)
-      step_rmse_test <- RMSE(PTEmo[[h]][,m], Obs_test)
+      step_rmspe_test <- RMSPE(PTEmo[[h]][,m], Obs_test)
       
       
       metrics_train[[h]][m,] <- c(m,
                                   step_mae_train,
                                   step_mape_train,
-                                  step_rmse_train)
+                                  step_rmspe_train)
       metrics_test[[h]][m,] <- c(m,
                                  step_mae_test,
                                  step_mape_test,
-                                 step_rmse_test)
+                                 step_rmspe_test)
       
       
       cat("Model: ", model_list[m], "\t", 
