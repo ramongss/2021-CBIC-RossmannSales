@@ -225,12 +225,12 @@ imf_plot <- IMFs %>%
   geom_line(size = 1, colour = '#377EB8') +
   theme_bw() +
   theme(
-    text = element_text(family = "CM Roman", size = 16),
-    axis.title.x = element_text(family = "CM Roman", size = 20),
+    text = element_text(family = "CM Roman", size = 14),
+    # axis.title.x = element_text(family = "CM Roman", size = 16),
     strip.placement = "outside",
     strip.background = element_blank(),
     panel.grid.minor = element_blank(),
-    strip.text = element_text(family = "CM Roman", size = 20),
+    # strip.text = element_text(family = "CM Roman", size = 16),
   ) +
   ylab('') + xlab('Daily samples') +
   facet_grid(
@@ -245,7 +245,7 @@ imf_plot %>%
   ggsave(
     filename = 'imf_plot.pdf',
     device = 'pdf',
-    width = 6,
+    width = 4.5,
     height = 8,
     units = "in",
     dpi = 1200
@@ -275,8 +275,113 @@ datasetplot %>%
   ggsave(
     filename = 'dataset_plot.pdf',
     device = 'pdf',
-    width = 6,
-    height = 6,
+    width = 8,
+    height = 4.5,
     units = "in",
     dpi = 1200
   )
+
+## Customer plot
+setwd(FiguresDir)
+
+customer <- StoreSales[,-2]
+
+customerplot <- customer %>%
+  ggplot(aes(x = date, y = customers)) +
+  geom_line(size = 1, colour = '#E41A1C') +
+  theme_bw() +
+  theme(
+    text = element_text(family = "CM Roman", size = 20),
+    axis.text.y = element_text(angle = 90),
+    strip.placement = "outside",
+    strip.background = element_blank(),
+    panel.grid.minor = element_blank(),
+  ) +
+  ylab('Number of customers') + xlab('Daily samples') +
+  scale_x_date(date_breaks = '1 month', date_labels = '%b')
+
+customerplot %>%
+  ggsave(
+    filename = 'customer_plot.pdf',
+    device = 'pdf',
+    width = 8,
+    height = 4.5,
+    units = "in",
+    dpi = 1200
+  )
+
+## Facet plot
+setwd(FiguresDir)
+
+facet <- StoreSales %>% 
+  melt(id.vars = c('date'))
+
+facet$variable <- facet$variable %>% 
+  factor(
+    levels = c('sales', 'customers'),
+    labels = c('Sales', 'No. of customers')
+  )
+
+facetplot <- facet %>%
+  ggplot(aes(x = date, y = value, colour = variable)) +
+  geom_line(size = 1) +
+  theme_bw() +
+  theme(
+    text = element_text(family = "CM Roman", size = 20),
+    axis.text.y = element_text(angle = 90),
+    axis.title.y = element_blank(),
+    strip.placement = "outside",
+    strip.background = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "none",
+  ) +
+  facet_grid(
+    rows = vars(variable),
+    scales = 'free',
+    switch = 'y',
+  ) +
+  xlab('Daily samples') +
+  scale_color_manual(values = c('#377EB8', '#E41A1C')) +
+  scale_y_continuous(breaks = c(400, 600, 800, 3000, 7500, 12000)) +
+  scale_x_date(date_breaks = '1 month', date_labels = '%b')
+
+facetplot %>%
+  ggsave(
+    filename = 'facet_plot.pdf',
+    device = 'pdf',
+    width = 8,
+    height = 9,
+    units = "in",
+    dpi = 1200
+  )
+
+# Summary table -----------------------------------------------------------
+
+summaries_table <- data.frame(
+  'Variable' = rep(names(StoreSales)[-1], times = 3),
+  'Samples' = rep(c('Whole', 'Training', 'Test'), each = ncol(StoreSales[-1]))
+)
+
+#Descriptives
+n <- nrow(StoreSales)
+cut <- n - 51
+
+#Whole
+Whole <- t(apply(StoreSales[,-1],2,function(x){c(mean(x),sd(x),min(x),max(x))}))
+colnames(Whole) <- c('Mean', 'Std', 'Min', 'Max')
+#Train Descriptives
+Train <- t(apply(StoreSales[1:cut,-1],2,function(x){c(mean(x),sd(x),min(x),max(x))}))
+colnames(Train) <- names(Whole)
+#Test Descriptives
+Test <- t(apply(tail(StoreSales[,-1],n - cut),2,function(x){c(mean(x),sd(x),min(x),max(x))}))
+colnames(Test) <- names(Whole)
+
+#Merge
+summaries_table <- cbind(summaries_table, rbind(Whole, Train, Test))
+row.names(summaries_table) <- NULL # reset row index
+
+# Reorder rows
+summaries_table <- summaries_table %>% 
+  arrange(factor(Variable, levels = names(StoreSales[-1])))
+
+print(xtable::xtable(summaries_table, digits = 2), include.rownames = FALSE)
