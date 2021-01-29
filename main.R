@@ -164,13 +164,13 @@ datasets$FH <- datasets$FH %>% factor(levels = c("One-day","Seven-days","Fourtee
 
 PredObsPlot <- datasets %>% 
   ggplot(aes(x = date, y = value, colour = type)) +
-  geom_line(size = 1) +
+  geom_line(size = 2) +
   theme_bw() +
   theme(legend.title = element_blank(),
         legend.position = 'bottom',
         legend.background = element_blank(),
-        legend.text = element_text(size = 14),
-        text = element_text(family = "CM Roman", size = 16),
+        legend.text = element_text(size = 35),
+        text = element_text(family = "CM Roman", size = 35),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.grid.minor = element_blank(),
@@ -182,16 +182,16 @@ PredObsPlot <- datasets %>%
   scale_color_manual(values = c('#377EB8','#E41A1C')) +
   geom_vline(xintercept = StoreSales$date[120], color = 'black', size = 0.5) +
   annotate(geom = 'text', x = StoreSales$date[10], y = min(datasets$value), hjust = .2, vjust = -.4, 
-           label = 'Training', color = 'black', family = 'CM Roman', size = 6) +
+           label = 'Training', color = 'black', family = 'CM Roman', size = 12) +
   annotate(geom = 'text', x = StoreSales$date[170], min(datasets$value), hjust = .2, vjust = -.4,
-           label = 'Test', color = 'black', family = 'CM Roman', size = 6)
+           label = 'Test', color = 'black', family = 'CM Roman', size = 12)
 
 PredObsPlot %>%
   ggsave(
     filename = 'PO_dataset.pdf',
     device = 'pdf',
-    width = 8,
-    height = 4.5,
+    width = 24,
+    height = 13.5,
     units = "in",
     dpi = 1200
   )
@@ -200,7 +200,7 @@ PredObsPlot %>%
 setwd(FiguresDir)
 
 IMFs <- results$EEMD$IMF
-IMFs$n <- seq(nrow(results$EEMD$IMF))
+IMFs$n <- StoreSales$date
 IMFs <- IMFs %>% melt(id.vars = c('n'))
 
 imf_labels <- c(
@@ -221,7 +221,7 @@ IMFs$variable <- IMFs$variable %>%
 imf_plot <- IMFs %>% 
   filter(variable != 'Obs') %>%
   ggplot(aes(x = n, y = value, colour = variable)) +
-  geom_line(size = 1, colour = '#377EB8') +
+  geom_line(size = 0.5, colour = '#377EB8') +
   theme_bw() +
   theme(
     text = element_text(family = "CM Roman", size = 14),
@@ -238,7 +238,7 @@ imf_plot <- IMFs %>%
     switch = 'y',
     labeller = "label_parsed",
   ) +
-  scale_x_continuous(breaks = seq(0,max(IMFs$n),44))
+  scale_x_date(date_breaks = '1 month', date_labels = '%b')
 
 imf_plot %>% 
   ggsave(
@@ -375,34 +375,33 @@ boxplot_data$variable <- boxplot_data$variable %>%
     labels = c('Sales', 'No. of customers')
   )
 
-boxplot <- boxplot_data %>%  ggplot(aes(x = day_of_week, y = value)) +
-  geom_boxplot()+
-  labs(title = "", y = "", x = "Day of the week") + 
+boxplot <- boxplot_data %>%  
+  ggplot(aes(x = day_of_week, y = value, fill = variable)) +
+  geom_boxplot() +
+  labs(x = "Day of the week") + 
   theme_bw() +
   theme(
-    axis.text.x = element_text(size=25),
-    axis.text.y = element_text(size=25),
-    axis.title=element_text(size=30),
-    text = element_text(family = "CM Roman"),
-    strip.text = element_text(size = 30),
+    axis.title.y = element_blank(),
+    text = element_text(family = "CM Roman", size = 35),
     strip.placement = "outside",
     strip.background = element_blank(),
-    panel.grid.minor = element_blank()
-  )+
-  facet_wrap(~variable, ncol = 2, scales = "free")
+    panel.grid.minor = element_blank(),
+    legend.position = 'None',
+  ) +
+  facet_wrap(~variable, ncol = 2, scales = "free") +
+  scale_fill_manual(values = alpha(c('#377EB8', '#E41A1C'), 0.7))
 
 boxplot %>%
   ggsave(
     filename = 'boxplot.pdf',
     device = 'pdf',
-    width = 12,
-    height = 6.75,
+    width = 16,
+    height = 9,
     units = "in",
     dpi = 1200
   )
 
 # Summary table -----------------------------------------------------------
-
 summaries_table <- data.frame(
   'Variable' = rep(names(StoreSales)[-1], times = 3),
   'Samples' = rep(c('Whole', 'Training', 'Test'), each = ncol(StoreSales[-1]))

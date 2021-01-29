@@ -6,7 +6,7 @@ plt.style.use('science')
 
 # Set data
 df = pd.DataFrame({
-'group': ['One day ahead', 'Seven days ahead', 'Fourteen days ahead'],
+'group': ['One-day-ahead', 'Seven-days-ahead', 'Fourteen-days-ahead'],
 'A': [495.5726, 1116.350, 1230.139],
 'B': [495.7883, 1061.467, 1181.240],
 'C': [891.6400, 1164.107, 1291.679],
@@ -57,7 +57,8 @@ my_dpi=96
 plt.figure(figsize=(1000/my_dpi, 1000/my_dpi), dpi=my_dpi)
 
 # Create a color palette:
-my_palette = plt.cm.get_cmap("Set1", len(df.index))
+# my_palette = plt.cm.get_cmap("Set1", len(df.index))
+my_palette = plt.cm.get_cmap("Set1", 9)
 
 # Loop to plot
 for row in range(0, len(df.index)):
