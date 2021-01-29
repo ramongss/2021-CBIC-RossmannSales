@@ -140,8 +140,7 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
 }
 
 # Plot results ------------------------------------------------------------
-
-## Plot Predict x Observed
+## Plot Predict x Observed ----
 setwd(FiguresDir)
 
 datasets <- data.frame(
@@ -170,8 +169,8 @@ PredObsPlot <- datasets %>%
   theme(legend.title = element_blank(),
         legend.position = 'bottom',
         legend.background = element_blank(),
-        legend.text = element_text(size = 20),
-        text = element_text(family = "CM Roman", size = 20),
+        legend.text = element_text(size = 14),
+        text = element_text(family = "CM Roman", size = 16),
         strip.placement = "outside",
         strip.background = element_blank(),
         panel.grid.minor = element_blank(),
@@ -184,20 +183,20 @@ PredObsPlot <- datasets %>%
   geom_vline(xintercept = StoreSales$date[120], color = 'black', size = 0.5) +
   annotate(geom = 'text', x = StoreSales$date[10], y = min(datasets$value), hjust = .2, vjust = -.4, 
            label = 'Training', color = 'black', family = 'CM Roman', size = 6) +
-  annotate(geom = 'text', x = StoreSales$date[140], min(datasets$value), hjust = .2, vjust = -.4,
+  annotate(geom = 'text', x = StoreSales$date[170], min(datasets$value), hjust = .2, vjust = -.4,
            label = 'Test', color = 'black', family = 'CM Roman', size = 6)
 
 PredObsPlot %>%
   ggsave(
     filename = 'PO_dataset.pdf',
     device = 'pdf',
-    width = 12,
-    height = 6.75,
+    width = 8,
+    height = 4.5,
     units = "in",
     dpi = 1200
   )
 
-## Plot IMFs
+## Plot IMFs ----
 setwd(FiguresDir)
 
 IMFs <- results$EEMD$IMF
@@ -251,7 +250,7 @@ imf_plot %>%
     dpi = 1200
   )
 
-## Dataset plot
+## Dataset plot ----
 setwd(FiguresDir)
 
 Observed <- StoreSales[,-3]
@@ -281,7 +280,7 @@ datasetplot %>%
     dpi = 1200
   )
 
-## Customer plot
+## Customer plot ----
 setwd(FiguresDir)
 
 customer <- StoreSales[,-2]
@@ -310,7 +309,7 @@ customerplot %>%
     dpi = 1200
   )
 
-## Facet plot
+## Facet plot ----
 setwd(FiguresDir)
 
 facet <- StoreSales %>% 
@@ -351,6 +350,53 @@ facetplot %>%
     device = 'pdf',
     width = 8,
     height = 9,
+    units = "in",
+    dpi = 1200
+  )
+
+## BoxPlot ----
+setwd(FiguresDir)
+
+boxplot_data <- rawdata %>%
+  filter(Store == store & Date >= "2015-01-01" & Open == 1) %>%
+  subset(select = c(DayOfWeek, Sales, Customers)) %>%
+  janitor::clean_names() %>% 
+  melt(id.vars = c('day_of_week'))
+
+boxplot_data$day_of_week <- boxplot_data$day_of_week %>% 
+  factor(
+    levels = c(1:6),
+    labels = c('Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.')
+  )
+
+boxplot_data$variable <- boxplot_data$variable %>% 
+  factor(
+    levels = c('sales', 'customers'),
+    labels = c('Sales', 'No. of customers')
+  )
+
+boxplot <- boxplot_data %>%  ggplot(aes(x = day_of_week, y = value)) +
+  geom_boxplot()+
+  labs(title = "", y = "", x = "Day of the week") + 
+  theme_bw() +
+  theme(
+    axis.text.x = element_text(size=25),
+    axis.text.y = element_text(size=25),
+    axis.title=element_text(size=30),
+    text = element_text(family = "CM Roman"),
+    strip.text = element_text(size = 30),
+    strip.placement = "outside",
+    strip.background = element_blank(),
+    panel.grid.minor = element_blank()
+  )+
+  facet_wrap(~variable, ncol = 2, scales = "free")
+
+boxplot %>%
+  ggsave(
+    filename = 'boxplot.pdf',
+    device = 'pdf',
+    width = 12,
+    height = 6.75,
     units = "in",
     dpi = 1200
   )
