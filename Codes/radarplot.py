@@ -28,18 +28,18 @@ def make_spider(row, title, color):
   angles += angles[:1]
   
   # Initialise the spider plot
-  ax = plt.subplot(1,3,row+1, polar=True, )
+  ax = plt.subplot(1,3,row+1, polar=True)
   
   # If you want the first axis to be on top:
   ax.set_theta_offset(pi / 2)
   ax.set_theta_direction(-1)
   
   # Draw one axe per variable + add labels labels yet
-  plt.xticks(angles[:-1], categories, size=8)
+  plt.xticks(angles[:-1], categories, size=15)
   
   # Draw ylabels
   ax.set_rlabel_position(0)
-  plt.yticks(color="grey", size=7)
+  plt.yticks(color="grey", size=12)
   plt.ylim(400,1700)
   
   # Ind1
@@ -49,7 +49,7 @@ def make_spider(row, title, color):
   ax.fill(angles, values, color=color, alpha=0.4)
   
   # Add a title
-  plt.title(title, size=11, y=1.1)
+  plt.title(title, size=20, y=1.1)
 
 # ------- PART 2: Apply to all individuals
 # initialize the figure
