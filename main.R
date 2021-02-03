@@ -139,6 +139,14 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
                 row.names = TRUE)
 }
 
+# Load data ---------------------------------------------------------------
+setwd(ResultsDir)
+
+results <- list()
+
+results[['EEMD']] <- readRDS('results_eemd.rds')
+results[['single']] <- readRDS('results_single.rds')
+
 # Plot results ------------------------------------------------------------
   ## Plot Predict x Observed ----
   setwd(FiguresDir)
@@ -153,14 +161,14 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
   ) %>% melt() %>% data.frame(
     .,
     rep(c('Observed','Predicted'), each = nrow(results$EEMD$Predictions$`1-step`)),
-    rep(c("One-day","Seven-days","Fourteen-days"), each = 2*nrow(results$EEMD$Predictions$`1-step`)),
+    rep(c("One day","Seven days","Fourteen days"), each = 2*nrow(results$EEMD$Predictions$`1-step`)),
     rep(tail(StoreSales$date, nrow(results$EEMD$Predictions$`1-step`)))
   )
   
   datasets$variable <- NULL
   colnames(datasets) <- c('value', 'type', 'FH', 'date')
   
-  datasets$FH <- datasets$FH %>% factor(levels = c("One-day","Seven-days","Fourteen-days"))
+  datasets$FH <- datasets$FH %>% factor(levels = c("One day","Seven days","Fourteen days"))
   
   PredObsPlot <- datasets %>% 
     ggplot(aes(x = date, y = value, colour = type)) +
@@ -175,7 +183,7 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
           strip.background = element_blank(),
           panel.grid.minor = element_blank(),
     ) +
-    ylab('Sales') + xlab('Daily samples') +
+    ylab('Sales') + xlab('Day') +
     facet_grid(rows = vars(FH)) +
     scale_y_continuous(breaks = c(3000, 7500, 12000)) +
     scale_x_date(date_breaks = '1 month', date_labels = '%b') +
@@ -231,7 +239,7 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
       panel.grid.minor = element_blank(),
       # strip.text = element_text(family = "CM Roman", size = 16),
     ) +
-    ylab('') + xlab('Daily samples') +
+    ylab('') + xlab('Day') +
     facet_grid(
       rows = vars(variable),
       scales = 'free',
@@ -339,7 +347,7 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
       scales = 'free',
       switch = 'y',
     ) +
-    xlab('Daily samples') +
+    xlab('Day') +
     scale_color_manual(values = c('#377EB8', '#E41A1C')) +
     scale_y_continuous(breaks = c(400, 600, 800, 3000, 7500, 12000)) +
     scale_x_date(date_breaks = '1 month', date_labels = '%b')
@@ -388,7 +396,7 @@ for (metric in seq(results[['EEMD']]$Decomp_Metrics)) {
       panel.grid.minor = element_blank(),
       legend.position = 'None',
     ) +
-    facet_wrap(~variable, ncol = 2, scales = "free") +
+    facet_wrap(~variable, ncol = 2, scales = "free", strip.position="left") +
     scale_fill_manual(values = alpha(c('#377EB8', '#E41A1C'), 0.7))
   
   boxplot %>%

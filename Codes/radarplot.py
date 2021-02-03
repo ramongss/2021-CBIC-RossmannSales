@@ -6,7 +6,7 @@ plt.style.use('science')
 
 # Set data
 df = pd.DataFrame({
-'group': ['One-day-ahead', 'Seven-days-ahead', 'Fourteen-days-ahead'],
+'group': ['(a)', '(b)', '(c)'],
 'A': [495.5726, 1116.350, 1230.139],
 'B': [495.7883, 1061.467, 1181.240],
 'C': [891.6400, 1164.107, 1291.679],
@@ -49,7 +49,7 @@ def make_spider(row, title, color):
   ax.fill(angles, values, color=color, alpha=0.4)
   
   # Add a title
-  plt.title(title, size=20, y=1.1)
+  plt.title(title, size=15, y=1.2)
 
 # ------- PART 2: Apply to all individuals
 # initialize the figure

@@ -1,6 +1,6 @@
 # Publication in [2021 International Joint Conference on Neural Networks (IJCNN)](https://www.ijcnn.org/)
 
-## :package::pill: Retail sales multi-step ahead forecasting: a Rossmann Store Sales case
+## :package::pill: Multi-Step Ahead Forecasting Applied to Rossmann Store Sales Case
 [<img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"></img> Ramon Gomes da Silva][RamonID], [<img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"></img> Matheus H. D. M. Ribeiro][MatheusID], [<img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"></img> Viviana Cocco Mariani][VivianaID], [<img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"></img> Leandro dos Santos Coelho][LeandroID]
 
 ![Framework](Figures/diagram2.png)
