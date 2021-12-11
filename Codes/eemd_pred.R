@@ -63,7 +63,7 @@ eemd_pred <- function(data, model_list, horizon){
   
   for (i in seq(IMF)) {
     n <- nrow(IMF[[i]])
-    cut <- round(n*0.7)
+    cut <- n - 183
     
     IMF_train[[i]] <- IMF[[i]][1:cut,]
     IMF_test[[i]]  <- tail(IMF[[i]],n-cut)

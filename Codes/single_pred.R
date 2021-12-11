@@ -22,7 +22,7 @@ single_pred <- function(data, model_list, horizon){
   
   # create train and test sets
   n <- nrow(data_lag)
-  cut <- round(n*0.7)
+  cut <- n - 183
   
   train <- data_lag[1:cut,]
   test <- tail(data_lag, n-cut)

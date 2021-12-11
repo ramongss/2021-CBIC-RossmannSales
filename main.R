@@ -36,27 +36,20 @@ library(ggplot2)
 setwd(DataDir)
 
 # load data
-rawdata <- read.csv('train.csv')
+rawdata <- readr::read_csv('train.csv')
 
-rawdata$Date <- rawdata$Date %>% as.Date() # format date column
-
-# randomly choose 1 store
+# randomly choose 4 store
 set.seed(123)
-store <- sample(1:max(rawdata$Store), 1, replace = F)
-
-# replace character column values
-rawdata$StateHoliday[rawdata$StateHoliday=='a'] <- 1
-rawdata$StateHoliday[rawdata$StateHoliday=='b'] <- 2
-rawdata$StateHoliday[rawdata$StateHoliday=='c'] <- 3
-rawdata$StateHoliday <- rawdata$StateHoliday %>% as.numeric()
+stores <- sample(1:max(rawdata$Store), 4, replace = F)
 
 # filter the store sales by the selected store
 StoreSales <- rawdata %>%
-  filter(Store == store & Date >= "2015-01-01" & Open == 1) %>%
-  subset(select = c(Date, Sales, Customers)) %>%
-  janitor::clean_names()
-
-StoreSales <- StoreSales[order(StoreSales$date),] # order by date
+  janitor::clean_names() %>% 
+  filter(store %in% stores & open == 1) %>%
+  subset(select = c(store, date, sales, customers)) %>%
+  group_by(store) %>%
+  arrange(date, .by_group = TRUE) %>% 
+  split(., .$store)
 
 # set working directory
 setwd(ResultsDir)
@@ -73,20 +66,19 @@ horizon <- c(1,7,14)
 
 # training phase
 results <- list()
+count <- 1
+for (store in paste0("store-",sort(stores))) {
+  print(store)
+  results[[store]] <- list()
+  results[[store]][["EEMD"]] <- eemd_pred(StoreSales[[count]], model_list, horizon)
+  results[[store]][["single"]] <- single_pred(StoreSales[[count]], model_list, horizon)
+  count <- count + 1
+}
 
-results[['EEMD']] <- eemd_pred(StoreSales, model_list, horizon)
-results[['single']] <- single_pred(StoreSales, model_list, horizon)
+beepr::beep(8)
 
 # save results
-saveRDS(
-  object = results[['EEMD']],
-  file = paste0('results_eemd.rds')
-)
-
-saveRDS(
-  object = results[['single']],
-  file = paste0('results_single.rds')
-)
+saveRDS(object = results, file = 'results.rds')
 
 # Save Sheets -------------------------------------------------------------
 # set working directory
